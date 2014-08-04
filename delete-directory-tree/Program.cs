@@ -8,20 +8,51 @@ using System.Threading.Tasks;
 
 namespace delete_directory_tree {
 	class Program {
+
+
+		private static bool _Quiet = false;
+		private static long _CntAllFiles = 0;
+		private static long _CntErrorFiles = 0;
+		private static long _CntAllDirs = 0;
+		private static long _CntErrorDirs = 0;
+
 		static int Main( string[] args ) {
 
-			if (null == args || args.Length != 1) {
-				Console.WriteLine( "Only one directory allowed!" );
+			if (null == args || args.Length < 1 || args.Length > 2) {
+				writeError( "delete-directory-tree [/Q] <directory>" );
 				return 1;
 			}
 
-			string dir = args[0];
+			string dir = string.Empty;
+
+			if (2 == args.Length && !"/Q".Equals( args[0], StringComparison.OrdinalIgnoreCase )) {
+				writeError( "[{0}]: unknown parameter", args[0] );
+				return 1;
+			} else if (2 == args.Length && "/Q".Equals( args[0], StringComparison.OrdinalIgnoreCase )) {
+				_Quiet = true;
+				dir = args[1];
+			} else {
+				dir = args[0];
+			}
+
 			if (!Directory.Exists( dir )) {
-				Console.WriteLine( "Directory [{0}] does not exist!", dir );
-				return 1;
+				writeError( "Directory [{0}] does not exist!", dir );
+				return 0;
 			}
 
-			return DeleteFilesAndFoldersRecursively( dir ) ? 0 : 1;
+			try {
+				return DeleteFilesAndFoldersRecursively( dir ) ? 0 : 1;
+			}
+			catch (Exception e) {
+				writeError( e.Message );
+				return 1;
+			}
+			finally {
+				Console.WriteLine( "{0} directories", _CntAllDirs );
+				Console.WriteLine( "{0} files", _CntAllFiles );
+				Console.WriteLine( "{0} directories with error", _CntErrorDirs );
+				Console.WriteLine( "{0} files with error", _CntErrorFiles );
+			}
 		}
 
 
@@ -30,21 +61,11 @@ namespace delete_directory_tree {
 
 			bool fileSuccess = true;
 			foreach (string file in Directory.GetFiles( target_dir )) {
-				bool singleFileSuccess = false;
-				for (int i = 0; i < 3; i++) {
-					try {
-						File.Delete( file );
-						singleFileSuccess = true;
-						break;
-					}
-					catch (Exception e) {
-						Console.WriteLine( "[{0}]: {1}", file, e.Message );
-						singleFileSuccess = false;
-						Thread.Sleep( 100 );
-					}
+				_CntAllFiles++;
+				if (!deleteFile( file )) {
+					fileSuccess = false;
+					_CntErrorFiles++;
 				}
-
-				if (!singleFileSuccess) { fileSuccess = false; }
 			}
 
 			bool dirSuccess = true;
@@ -56,23 +77,57 @@ namespace delete_directory_tree {
 			// This makes the difference between whether it works or not.
 			Thread.Sleep( 10 );
 
-			bool singleDirSuccess = false;
-			for (int i = 0; i < 3; i++) {
-				try {
-					Directory.Delete( target_dir );
-					singleDirSuccess = true;
-					break;
-				}
-				catch (Exception e) {
-					Console.WriteLine( "[{0}]: {1}", target_dir, e.Message );
-					singleDirSuccess = false;
-					Thread.Sleep( 100 );
-				}
-
-				if (!singleDirSuccess) { dirSuccess = false; }
+			_CntAllDirs++;
+			if (!deleteDir( target_dir )) {
+				dirSuccess = false;
+				_CntErrorDirs++;
 			}
 
 			return (fileSuccess && dirSuccess);
 		}
+
+
+		public static bool deleteFile( string file ) {
+
+			for (int i = 0; i < 3; i++) {
+				try {
+					File.Delete( file );
+					return true;
+				}
+				catch (Exception e) {
+					writeError( "[{0}]: {1}", file, e.Message );
+					Thread.Sleep( 100 );
+				}
+			}
+
+			return false;
+		}
+
+
+		public static bool deleteDir( string dir ) {
+
+			for (int i = 0; i < 3; i++) {
+				try {
+					if (!_Quiet) { Console.WriteLine( "[{0}] deleting ...", dir ); }
+					Directory.Delete( dir );
+					return true;
+				}
+				catch (Exception e) {
+					writeError( "[{0}]: {1}", dir, e.Message );
+					Thread.Sleep( 100 );
+				}
+			}
+
+			return false;
+		}
+
+		public static void writeError( string msg, params object[] args ) {
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine( msg, args );
+			Console.ResetColor();
+		}
+
+
+
 	}
 }
