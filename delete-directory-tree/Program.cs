@@ -91,7 +91,10 @@ namespace delete_directory_tree {
 
 			for (int i = 0; i < 3; i++) {
 				try {
-					File.Delete( file );
+					//File.Delete( file );
+					FileInfo f = new FileInfo( file );
+					f.Attributes = f.Attributes & ~(FileAttributes.Archive | FileAttributes.ReadOnly | FileAttributes.Hidden);
+					f.Delete();
 					return true;
 				}
 				catch (Exception e) {
@@ -109,7 +112,10 @@ namespace delete_directory_tree {
 			for (int i = 0; i < 3; i++) {
 				try {
 					if (!_Quiet) { Console.WriteLine( "[{0}] deleting ...", dir ); }
-					Directory.Delete( dir );
+					//Directory.Delete( dir );
+					DirectoryInfo d = new DirectoryInfo( dir );
+					d.Attributes = d.Attributes & ~(FileAttributes.Archive | FileAttributes.ReadOnly | FileAttributes.Hidden);
+					d.Delete();
 					return true;
 				}
 				catch (Exception e) {
