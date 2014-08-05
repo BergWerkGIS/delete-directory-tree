@@ -91,7 +91,12 @@ namespace delete_directory_tree {
 
 			for (int i = 0; i < 3; i++) {
 				try {
-					//File.Delete( file );
+					//another way to reset attributes:
+					//FileSystemInfo fsi = new FileSystemInfo(pathToFile);
+					//fsi.Attributes = FileAttributes.Normal;
+					//or
+					//File.SetAttributes(pathToFile, FileAttributes.Normal);
+					//File.Delete(pathToFile);
 					FileInfo f = new FileInfo( file );
 					f.Attributes = f.Attributes & ~(FileAttributes.Archive | FileAttributes.ReadOnly | FileAttributes.Hidden);
 					f.Delete();

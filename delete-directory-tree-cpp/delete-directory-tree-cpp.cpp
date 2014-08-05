@@ -54,7 +54,13 @@ private: HANDLE searchHandle;
 /// </remarks>
 bool recursiveDeleteDirectory(const std::wstring &path) {
 
-	static const std::wstring allFilesMask(L"\\*");
+	std::wstring allFilesMask;
+	if (0 == path.compare(path.size() - 1, 1, _T("\\"))) {
+		allFilesMask = _T("*");
+	} else {
+		allFilesMask = _T("\\*");
+
+	}
 
 	WIN32_FIND_DATAW findData;
 	bool dirSuccess = true;
@@ -99,6 +105,9 @@ bool recursiveDeleteDirectory(const std::wstring &path) {
 				} else {
 					_CntAllFiles++;
 					bool tmpFileSuccess = true;
+					//remove readonly attribute
+					SetFileAttributes(filePath.c_str(), GetFileAttributes(filePath.c_str()) & ~FILE_ATTRIBUTE_READONLY);
+					//Try 3 times to delete the file. Wait in between
 					for (int i = 0; i < 3; i++) {
 						BOOL result = ::DeleteFileW(filePath.c_str());
 						if (result == TRUE) {
@@ -127,21 +136,25 @@ bool recursiveDeleteDirectory(const std::wstring &path) {
 		} // for
 	}
 
-	Sleep(100);
+	//Seems that this is the important step:
+	//maybe the searchHandle needs some time to be released
+	Sleep(10);
 
 	if (!_Quiet) { _tcout << path << " deleting ..." << std::endl; }
 	_CntAllDirs++;
 
-	// The directory is empty, we can now safely remove it
+	//The directory is empty, we can now safely remove it
+	//Try 3 times to delete the directory. Wait in between
 	for (int i = 0; i < 3; i++) {
 		BOOL result = ::RemoveDirectory(path.c_str());
-		_tcout << result;
+		//_tcout << _T("RemoveDirectory [") << i << _T("] ") << path << ": " << result << std::endl;
 		if (result == TRUE) {
 			dirSuccess = true;
 			break;
 		} else {
 			dirSuccess = false;
-			_tcout << path << _T(" Could not remove directory") << std::endl;
+			if (0 == i) { _CntErrorDirs++; }
+			_tcout << path << _T(": Could not remove directory") << std::endl;
 			Sleep(100);
 		}
 	}
