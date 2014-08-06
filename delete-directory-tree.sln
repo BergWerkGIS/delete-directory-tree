@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "delete-directory-tree", "delete-directory-tree\delete-directory-tree.csproj", "{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}"
 EndProject
@@ -30,7 +30,8 @@ Global
 		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Mixed Platforms.ActiveCfg = Release|x64
 		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Mixed Platforms.Build.0 = Release|x64
-		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Win32.ActiveCfg = Release|Any CPU
+		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Win32.ActiveCfg = Release|x86
+		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|Win32.Build.0 = Release|x86
 		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|x64.ActiveCfg = Release|x64
 		{1F4557FD-B6BF-48D8-96BE-3A7A61CCED36}.Release|x64.Build.0 = Release|x64
 		{4FFF77AF-D9D7-434B-A727-C38A4966173E}.Debug|Any CPU.ActiveCfg = Debug|Win32
@@ -45,6 +46,7 @@ Global
 		{4FFF77AF-D9D7-434B-A727-C38A4966173E}.Release|Win32.ActiveCfg = Release|Win32
 		{4FFF77AF-D9D7-434B-A727-C38A4966173E}.Release|Win32.Build.0 = Release|Win32
 		{4FFF77AF-D9D7-434B-A727-C38A4966173E}.Release|x64.ActiveCfg = Release|x64
+		{4FFF77AF-D9D7-434B-A727-C38A4966173E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
