@@ -45,7 +45,7 @@ namespace delete_directory_tree {
 			}
 
 			try {
-				if (!_Quiet) { Console.WriteLine(fullPath); }
+				if (_Quiet) { Console.WriteLine( "[{0}]", fullPath ); }
 				return DeleteFilesAndFoldersRecursively(dir) ? 0 : 1;
 			}
 			catch (Exception e) {
@@ -53,7 +53,8 @@ namespace delete_directory_tree {
 				return 1;
 			}
 			finally {
-				Console.WriteLine("[{0}]", fullPath);
+				//show summary, repeat base dir name if not quiet
+				if (!_Quiet) { Console.WriteLine( "[{0}]", fullPath ); }
 				string msg = string.Format(
 					//"{0,7:#######} folders - {1,7:#######} with error, {2,7:#######} files - {3,7:#######} with error"
 					"{0,7} folders {1,7} with error, {2,7} files {3,7} with error"
